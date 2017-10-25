@@ -1,18 +1,18 @@
 package party.shaytang.search.controllers.entities;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class PagingResponse<T> {
+public class PageResponse<T> {
     private int page;
     private int size;
     private int totalPages;
-    private int totalElements;
-    private ArrayList<T> entities;
+    private long totalElements;
+    private List<T> entities;
 
-    public PagingResponse() {
+    public PageResponse() {
     }
 
-    public PagingResponse(int page, int size, int totalPages, int totalElements, ArrayList<T> entities) {
+    public PageResponse(int page, int size, int totalPages, long totalElements, List<T> entities) {
         this.page = page;
         this.size = size;
         this.totalPages = totalPages;
@@ -44,19 +44,19 @@ public class PagingResponse<T> {
         this.totalPages = totalPages;
     }
 
-    public int getTotalElements() {
+    public long getTotalElements() {
         return totalElements;
     }
 
-    public void setTotalElements(int totalElements) {
+    public void setTotalElements(long totalElements) {
         this.totalElements = totalElements;
     }
 
-    public ArrayList<T> getEntities() {
+    public List<T> getEntities() {
         return entities;
     }
 
-    public void setEntities(ArrayList<T> entities) {
+    public void setEntities(List<T> entities) {
         this.entities = entities;
     }
 }

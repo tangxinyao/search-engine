@@ -15,17 +15,17 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages = "org/springframework/data/elasticsearch/repositories")
+@EnableElasticsearchRepositories(basePackages = "party.shaytang.search.repositories")
 public class ESConfig {
     private static String HOST = "localhost";
     private static int PORT = 9300;
 
     @Bean
     public ElasticsearchOperations elasticsearchTemplate() {
-        return new ElasticsearchTemplate(client());
+        return new ElasticsearchTemplate(getClient());
     }
 
-    private Client client() {
+    private Client getClient() {
         TransportClient client = null;
         try {
             InetSocketTransportAddress address = new InetSocketTransportAddress(

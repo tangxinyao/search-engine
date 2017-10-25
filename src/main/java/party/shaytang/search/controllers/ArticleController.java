@@ -1,14 +1,16 @@
 package party.shaytang.search.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import party.shaytang.search.controllers.entities.PageResponse;
 import party.shaytang.search.controllers.entities.SearchArticleRequest;
-import party.shaytang.search.models.Article;
+import party.shaytang.search.repositories.entites.Article;
 import party.shaytang.search.services.ArticleService;
 
-import java.util.ArrayList;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "elasticsearch/article")
@@ -21,35 +23,57 @@ public class ArticleController {
     }
 
     @GetMapping
-    public ResponseEntity<Article> retrieveArticle() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Article> retrieveArticle(@RequestParam String id) {
+        Optional<Article> result = service.retrieveArticleById(id);
+        if (result.isPresent()) {
+            return new ResponseEntity<>(result.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "all")
-    public ResponseEntity<ArrayList<Article>> retrieveArticles() {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping(value = "search")
-    public ResponseEntity<ArrayList<Article>> searchArticle(@RequestBody SearchArticleRequest request) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<PageResponse<Article>> retrieveArticles(@RequestParam int page,
+                                                                  @RequestParam int size) {
+        Page<Article> result = service.retrieveArticles(page, size);
+        return new ResponseEntity<>(new PageResponse<>(page, size, result.getTotalPages(),
+                result.getTotalElements(), result.getContent()), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Article> createArticle(@RequestBody Article article) {
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity createArticle(@RequestBody Article article) {
+        Boolean result = service.createArticle(article);
+        if (result) {
+            return new ResponseEntity(HttpStatus.CREATED);
+        }
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping(value = "search")
+    public ResponseEntity<PageResponse<Article>> searchArticle(@RequestBody SearchArticleRequest request) {
+        Page<Article> result = service.searchArticles(request);
+        return new ResponseEntity<>(new PageResponse<>(request.getPage(), request.getSize(), result.getTotalPages(),
+                result.getTotalElements(), result.getContent()), HttpStatus.OK);
     }
 
     @PutMapping
-    public ResponseEntity<Article> updateArticle(@RequestBody Article article) {
-        if (article.getId() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity updateArticle(@RequestBody Article article) {
+        if (article.getId() != null) {
+            Boolean result = service.updateArticle(article);
+            if (result) {
+                return new ResponseEntity(HttpStatus.OK);
+            }
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping
-    public ResponseEntity<Article> deleteArticle(String id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity deleteArticle(String id) {
+        if (id != null) {
+            Boolean result = service.deleteArticle(id);
+            if (result) {
+                return new ResponseEntity(HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 }

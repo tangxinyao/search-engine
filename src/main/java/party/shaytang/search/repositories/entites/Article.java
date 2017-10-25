@@ -1,32 +1,32 @@
-package party.shaytang.search.models;
+package party.shaytang.search.repositories.entites;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Map;
 
+@Document(indexName = "articles", type = "articles", shards = 1, replicas = 0, refreshInterval = "-1")
 public class Article implements Serializable {
+    @Id
     private String id;
+    @Field(type = FieldType.text, analyzer = "smartcn")
     private String title;
+    @Field(type = FieldType.text, analyzer = "smartcn")
     private String author;
+    @Field(type = FieldType.text, analyzer = "smartcn")
     private String major;
+    @Field(type = FieldType.text, analyzer = "smartcn")
     private String degree;
+    @Field(type = FieldType.text, analyzer = "smartcn")
     private String content;
-    private Map<String, Float> grades;
-    private ArrayList<String> tags = new ArrayList<>();
+    private Grade grades;
+    @Field(type = FieldType.Object, analyzer = "smartcn")
+    private ArrayList<String> tags;
 
     public Article() {
-    }
-
-    public Article(String id, String title, String author, String major, String degree, String content,
-                   Map<String, Float> grades, ArrayList<String> tags) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.major = major;
-        this.degree = degree;
-        this.content = content;
-        this.grades = grades;
-        this.tags = tags;
     }
 
     public String getId() {
@@ -77,11 +77,11 @@ public class Article implements Serializable {
         this.content = content;
     }
 
-    public Map<String, Float> getGrades() {
+    public Grade getGrades() {
         return grades;
     }
 
-    public void setGrades(Map<String, Float> grades) {
+    public void setGrades(Grade grades) {
         this.grades = grades;
     }
 
