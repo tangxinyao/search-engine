@@ -5,11 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import party.shaytang.search.controllers.entities.PageResponse;
-import party.shaytang.search.controllers.entities.SearchArticleRequest;
-import party.shaytang.search.repositories.entites.Article;
+import party.shaytang.search.entites.Article;
 import party.shaytang.search.services.ArticleService;
 
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -32,9 +31,16 @@ public class ArticleController {
     }
 
     @GetMapping(value = "all")
-    public ResponseEntity<PageResponse<Article>> retrieveArticles(@RequestParam int page,
-                                                                  @RequestParam int size) {
+    public ResponseEntity<PageResponse<Article>> retrieveArticles(@RequestParam int page, @RequestParam int size) {
         Page<Article> result = service.retrieveArticles(page, size);
+        return new ResponseEntity<>(new PageResponse<>(page, size, result.getTotalPages(),
+                result.getTotalElements(), result.getContent()), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "search")
+    public ResponseEntity<PageResponse<Article>> searchArticle(@RequestParam int page, @RequestParam int size,
+                                                               @RequestParam String key) {
+        Page<Article> result = service.searchArticles(page, size, key);
         return new ResponseEntity<>(new PageResponse<>(page, size, result.getTotalPages(),
                 result.getTotalElements(), result.getContent()), HttpStatus.OK);
     }
@@ -46,13 +52,6 @@ public class ArticleController {
             return new ResponseEntity(HttpStatus.CREATED);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
-    }
-
-    @PostMapping(value = "search")
-    public ResponseEntity<PageResponse<Article>> searchArticle(@RequestBody SearchArticleRequest request) {
-        Page<Article> result = service.searchArticles(request);
-        return new ResponseEntity<>(new PageResponse<>(request.getPage(), request.getSize(), result.getTotalPages(),
-                result.getTotalElements(), result.getContent()), HttpStatus.OK);
     }
 
     @PutMapping

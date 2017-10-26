@@ -1,4 +1,4 @@
-package party.shaytang.search.controllers.entities;
+package party.shaytang.search.controllers;
 
 import java.util.List;
 
